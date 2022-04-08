@@ -34,7 +34,7 @@ interface Player {
   pos: Position
 }
 
-const createBall = (x: number, y: number, id: string, opacity = 1.0, radius = 40) => {
+const createBall = (x: number, y: number, id: number, opacity = 1.0, radius = 40) => {
   return Bodies.circle(x, y, radius, {
     render: {
       // @ts-ignore
@@ -88,7 +88,7 @@ const main = async () => {
 
   engine.gravity.scale = 0
 
-  const ball = createBall(400, 200, String(awareness.clientID) + nanoid(8))
+  const ball = createBall(400, 200, awareness.clientID)
 
   // add bodies
   Composite.add(world, [
@@ -137,7 +137,7 @@ const main = async () => {
     } else {
       otherPlayers.forEach(otherPlayer => {
         if (otherPlayer?.pos?.x) {
-          const newBody = createBall(otherPlayer.pos.x, otherPlayer.pos.y, String(otherPlayer.id), 0.7)
+          const newBody = createBall(otherPlayer.pos.x, otherPlayer.pos.y, otherPlayer.id, 0.7)
           playerObjs.push({
             id: otherPlayer.id,
             body: newBody
