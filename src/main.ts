@@ -3,7 +3,8 @@ import Matter, { Bodies, Body, Common, Composite, Engine, Events, Mouse, Render,
 import { nanoid } from 'nanoid'
 
 import { generateFromString } from './avatar'
-import { awareness, SMALL_COUNTS } from './utils'
+import { SMALL_COUNTS } from './utils'
+import { awareness } from './y'
 
 console.log('ID', awareness.clientID)
 

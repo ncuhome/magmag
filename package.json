@@ -10,7 +10,8 @@
     "lint:fix": "npm run lint -- --fix",
     "serve": "vite preview",
     "start": "yarn dev",
-    "watch": "vite build --watch"
+    "watch": "vite build --watch",
+    "server": "npx y-webrtc-signaling"
   },
   "dependencies": {
     "common-tags": "^1.8.2",
@@ -19,7 +20,7 @@
     "matter-attractors": "^0.1.6",
     "matter-js": "^0.18.0",
     "nanoid": "^3.3.2",
-    "y-websocket": "^1.4.0",
+    "y-webrtc": "^10.2.2",
     "yjs": "^13.5.34"
   },
   "devDependencies": {
