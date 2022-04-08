@@ -2,33 +2,29 @@ lockfileVersion: 5.3
 
 specifiers:
   '@kuss/eslint-config-vanilla': 2.4.0
-  '@types/lodash.throttle': ^4.1.6
   '@types/matter-js': ^0.17.7
-  common-tags: ^1.8.2
   eslint: 8.12.0
   generate-avatar: ^1.4.10
-  lodash.throttle: ^4.1.1
   matter-attractors: ^0.1.6
   matter-js: ^0.18.0
   nanoid: ^3.3.2
+  toastify-js: ^1.11.2
   typescript: 4.6.3
   vite: 2.9.1
   y-webrtc: ^10.2.2
   yjs: ^13.5.34
 
 dependencies:
-  common-tags: 1.8.2
   generate-avatar: 1.4.10
-  lodash.throttle: 4.1.1
   matter-attractors: 0.1.6
   matter-js: 0.18.0
   nanoid: 3.3.2
+  toastify-js: 1.11.2
   y-webrtc: 10.2.2
   yjs: 13.5.34
 
 devDependencies:
   '@kuss/eslint-config-vanilla': 2.4.0_eslint@8.12.0+typescript@4.6.3
-  '@types/lodash.throttle': 4.1.6
   '@types/matter-js': 0.17.7
   eslint: 8.12.0
   typescript: 4.6.3
@@ -134,16 +130,6 @@ packages:
 
   /@types/json5/0.0.29:
     resolution: {integrity: sha1-7ihweulOEdK4J7y+UnC86n8+ce4=}
-    dev: true
-
-  /@types/lodash.throttle/4.1.6:
-    resolution: {integrity: sha512-/UIH96i/sIRYGC60NoY72jGkCJtFN5KVPhEMMMTjol65effe1gPn0tycJqV5tlSwMTzX8FqzB5yAj0rfGHTPNg==}
-    dependencies:
-      '@types/lodash': 4.14.181
-    dev: true
-
-  /@types/lodash/4.14.181:
-    resolution: {integrity: sha512-n3tyKthHJbkiWhDZs3DkhkCzt2MexYHXlX0td5iMplyfwketaOeKboEVBqzceH7juqvEg3q5oUoBFxSLu7zFag==}
     dev: true
 
   /@types/matter-js/0.17.7:
@@ -403,11 +389,6 @@ packages:
   /color-name/1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
     dev: true
-
-  /common-tags/1.8.2:
-    resolution: {integrity: sha512-gk/Z852D2Wtb//0I+kRFNKKE9dIIVirjoqPoA1wJU+XePVXZfGeBpk45+A1rKO4Q43prqWBNY/MiIeRLbPWUaA==}
-    engines: {node: '>=4.0.0'}
-    dev: false
 
   /concat-map/0.0.1:
     resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
@@ -1326,10 +1307,6 @@ packages:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
     dev: true
 
-  /lodash.throttle/4.1.1:
-    resolution: {integrity: sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=}
-    dev: false
-
   /lru-cache/6.0.0:
     resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
     engines: {node: '>=10'}
@@ -1695,6 +1672,10 @@ packages:
     dependencies:
       is-number: 7.0.0
     dev: true
+
+  /toastify-js/1.11.2:
+    resolution: {integrity: sha512-bMBNKhZLPX/sDhpwM7KHIRUTtqCylQeoZDiEWy5zE7iDUJ92XmP8AKgDAp9rXx6pR5GXGFtQHHoH62toahbHgQ==}
+    dev: false
 
   /tsconfig-paths/3.14.1:
     resolution: {integrity: sha512-fxDhWnFSLt3VuTwtvJt5fpwxBHg5AdKWMsgcPOOIilyjymcYVZoCQF8fvFRezCNfblEXmi+PcM1eYHeOAgXCOQ==}
