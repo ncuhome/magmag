@@ -12,31 +12,34 @@ Matter.use(MatterAttractors)
 
 const uid = nanoid(16)
 
-interface PlayerObj {
-  id: number
-  body: Body
-}
-
-const playerObjs: PlayerObj[] = []
-
 window.onbeforeunload = function () {
-  awareness.setLocalState(null)
+  awareness.destroy()
 }
 
 window.addEventListener('unload', () => {
-  awareness.setLocalState(null)
+  awareness.destroy()
 })
 
+type Id = number
+type Uid = string
+
+interface PlayerObj {
+  body: Body
+  id: Id
+}
 interface Position {
   x: number
   y: number
 }
 
 interface Player {
-  id: number
+  id: Id
   pos: Position
-  uid: string
+  uid: Uid
 }
+
+const playerObjs: PlayerObj[] = []
+let lastOtherIds: Id[] = []
 
 const createBall = (x: number, y: number, id: string, opacity = 1.0, radius = 40) => {
   return Bodies.circle(x, y, radius, {
@@ -68,11 +71,9 @@ const createBall = (x: number, y: number, id: string, opacity = 1.0, radius = 40
 }
 
 const main = async () => {
-  // create engine
   const engine = Engine.create()
   const world = engine.world
 
-  // create renderer
   const render = Render.create({
     element: document.body,
     engine: engine,
@@ -80,13 +81,11 @@ const main = async () => {
       width: window.innerWidth,
       height: window.innerHeight,
       wireframes: false
-      // showVelocity: true
     }
   })
 
   Render.run(render)
 
-  // create runner
   const runner = Runner.create()
   Runner.run(runner, engine)
 
@@ -94,7 +93,6 @@ const main = async () => {
 
   const ball = createBall(400, 200, uid)
 
-  // add bodies
   Composite.add(world, [
     ball
   ])
@@ -118,28 +116,34 @@ const main = async () => {
     World.add(world, body)
   }
 
-  // add mouse control
   const mouse = Mouse.create(render.canvas)
 
   const syncStates = () => {
-    const states = awareness.getStates().values()
-    const otherPlayers = Array.from(states).filter(state => state.id !== awareness.clientID) as Player[]
+    const map = awareness.getStates()
 
+    const otherPlayers = Array.from(map.values()).filter(state => state.id !== awareness.clientID) as Player[]
     const otherIds = otherPlayers.map(player => player.id)
 
-    if (playerObjs.length > 0) {
-      playerObjs.forEach(playerObj => {
-        const idx = otherIds.indexOf(playerObj.id)
-        if (idx >= 0) {
-          playerObj.body.position.x = otherPlayers[idx].pos.x
-          playerObj.body.position.y = otherPlayers[idx].pos.y
-        } else {
+    const shouldAdd = otherIds.filter(id => !lastOtherIds.includes(id))
+    const shouldRemove = lastOtherIds.filter(id => !otherIds.includes(id))
+
+    // Remove missing players
+    if (shouldRemove.length > 0) {
+      shouldRemove.forEach(id => {
+        const playerObjIdx = playerObjs.findIndex(playerObj => playerObj.id === id)
+        if (playerObjIdx !== -1) {
+          const playerObj = playerObjs[playerObjIdx]
           World.remove(world, playerObj.body)
-          playerObjs.splice(playerObjs.indexOf(playerObj), 1)
+          playerObjs.splice(playerObjIdx, 1)
+          console.log('removed', playerObj.id)
         }
       })
-    } else {
-      otherPlayers.forEach(otherPlayer => {
+    }
+
+    // Add new players
+    if (shouldAdd.length > 0) {
+      shouldAdd.forEach(id => {
+        const otherPlayer = map.get(id)
         if (otherPlayer?.pos?.x) {
           const newBody = createBall(otherPlayer.pos.x, otherPlayer.pos.y, otherPlayer.uid, 0.7)
           playerObjs.push({
@@ -147,9 +151,19 @@ const main = async () => {
             body: newBody
           })
           World.add(world, newBody)
+          console.log('added', otherPlayer.id)
         }
       })
     }
+
+    // Sync positions
+    playerObjs.forEach(playerObj => {
+      const otherPlayer = map.get(playerObj.id)
+      playerObj.body.position.x = otherPlayer.pos.x
+      playerObj.body.position.y = otherPlayer.pos.y
+    })
+
+    lastOtherIds = otherIds
   }
 
   awareness.on('change', () => {
