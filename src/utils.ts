@@ -1,6 +1,9 @@
+import getIsMobile from 'is-mobile'
 import Toastify from 'toastify-js'
 
-export const SMALL_COUNTS = 100
+export const IS_MOBILE = getIsMobile()
+
+export const SMALL_COUNTS = 66
 
 export const enum ToastType {
   JOIN,
