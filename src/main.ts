@@ -1,9 +1,11 @@
+import 'toastify-js/src/toastify.css'
+
 import MatterAttractors from 'matter-attractors'
-import Matter, { Bodies, Body, Common, Composite, Engine, Events, Mouse, Render, Runner, World } from 'matter-js'
+import Matter, { Bodies, Body, Common, Engine, Events, Mouse, Render, Runner, World } from 'matter-js'
 import { nanoid } from 'nanoid'
 
 import { generateFromString } from './avatar'
-import { SMALL_COUNTS } from './utils'
+import { SMALL_COUNTS, toast, ToastType } from './utils'
 import { awareness } from './y'
 
 console.log('ID', awareness.clientID)
@@ -13,33 +15,26 @@ Matter.use(MatterAttractors)
 const uid = nanoid(16)
 
 window.onbeforeunload = function () {
-  awareness.destroy()
+  awareness.setLocalState(null)
 }
 
 window.addEventListener('unload', () => {
-  awareness.destroy()
+  awareness.setLocalState(null)
 })
 
 type Id = number
-type Uid = string
 
 interface PlayerObj {
   body: Body
   id: Id
 }
-interface Position {
-  x: number
-  y: number
-}
-
-interface Player {
-  id: Id
-  pos: Position
-  uid: Uid
+interface StateChanged {
+  added: Id[]
+  removed: Id[]
+  updated: Id[]
 }
 
 const playerObjs: PlayerObj[] = []
-let lastOtherIds: Id[] = []
 
 const createBall = (x: number, y: number, id: string, opacity = 1.0, radius = 40) => {
   return Bodies.circle(x, y, radius, {
@@ -93,7 +88,7 @@ const main = async () => {
 
   const ball = createBall(400, 200, uid)
 
-  Composite.add(world, [
+  World.add(world, [
     ball
   ])
 
@@ -118,62 +113,45 @@ const main = async () => {
 
   const mouse = Mouse.create(render.canvas)
 
-  const syncStates = () => {
+  const syncStates = (state: StateChanged) => {
     const map = awareness.getStates()
 
-    const otherPlayers = Array.from(map.values()).filter(state => state.id !== awareness.clientID) as Player[]
-    const otherIds = otherPlayers.map(player => player.id)
-
-    const shouldAdd = otherIds.filter(id => !lastOtherIds.includes(id))
-    const shouldRemove = lastOtherIds.filter(id => !otherIds.includes(id))
-
-    // Remove missing players
-    if (shouldRemove.length > 0) {
-      shouldRemove.forEach(id => {
-        const playerObjIdx = playerObjs.findIndex(playerObj => playerObj.id === id)
-        if (playerObjIdx !== -1) {
-          const playerObj = playerObjs[playerObjIdx]
-          World.remove(world, playerObj.body)
-          playerObjs.splice(playerObjIdx, 1)
-          console.log('removed', playerObj.id)
-        }
-      })
-    }
-
-    // Add new players
-    if (shouldAdd.length > 0) {
-      shouldAdd.forEach(id => {
-        const otherPlayer = map.get(id)
-        if (otherPlayer?.pos?.x) {
-          const newBody = createBall(otherPlayer.pos.x, otherPlayer.pos.y, otherPlayer.uid, 0.7)
-          playerObjs.push({
-            id: otherPlayer.id,
-            body: newBody
-          })
-          World.add(world, newBody)
-          console.log('added', otherPlayer.id)
-        }
-      })
-    }
-
-    // Sync positions
-    playerObjs.forEach(playerObj => {
-      const otherPlayer = map.get(playerObj.id)
-      playerObj.body.position.x = otherPlayer.pos.x
-      playerObj.body.position.y = otherPlayer.pos.y
+    state.added.forEach(id => {
+      const otherPlayer = map.get(id)
+      if (otherPlayer?.pos?.x) {
+        const newBody = createBall(otherPlayer.pos.x, otherPlayer.pos.y, otherPlayer.uid, 0.7)
+        playerObjs.push({
+          id: otherPlayer.id,
+          body: newBody
+        })
+        World.add(world, newBody)
+        console.log('added', otherPlayer.id)
+        toast(`${otherPlayer.id} 已加入时间线`, ToastType.JOIN)
+      }
     })
 
-    lastOtherIds = otherIds
+    state.removed.forEach(id => {
+      const playerObjIdx = playerObjs.findIndex(playerObj => playerObj.id === id)
+      if (playerObjIdx !== -1) {
+        const playerObj = playerObjs[playerObjIdx]
+        World.remove(world, playerObj.body)
+        playerObjs.splice(playerObjIdx, 1)
+        console.log('removed', playerObj.id)
+        toast(`${playerObj.id} 已离开时间线`, ToastType.QUIT)
+      }
+    })
   }
 
-  awareness.on('change', () => {
-    syncStates()
-  })
+  awareness.on('change', syncStates)
 
   Events.on(engine, 'afterUpdate', () => {
-    if (!mouse.position.x) {
-      return
-    }
+    playerObjs.forEach(playerObj => {
+      const otherPlayer = awareness.getStates().get(playerObj.id)
+      if (otherPlayer?.pos?.x) {
+        playerObj.body.position.x = otherPlayer.pos.x
+        playerObj.body.position.y = otherPlayer.pos.y
+      }
+    })
 
     awareness.setLocalState({
       id: awareness.clientID,
@@ -183,6 +161,10 @@ const main = async () => {
         y: ball.position.y
       }
     })
+
+    if (!mouse.position.x) {
+      return
+    }
 
     Body.translate(ball, {
       x: (mouse.position.x - ball.position.x) * 0.25,

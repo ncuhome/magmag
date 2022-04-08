@@ -4,6 +4,6 @@ import * as Y from 'yjs'
 export const ydoc = new Y.Doc()
 
 // @ts-ignore
-const provider = new WebrtcProvider('magmag', ydoc, { signaling: ['wss://y-webrtc-signaling.onrender.com'] })
+export const provider = new WebrtcProvider('magmag', ydoc, { signaling: ['wss://y-webrtc-signaling.onrender.com'], filterBcConns: false })
 
 export const awareness = provider.awareness
