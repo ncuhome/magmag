@@ -111,86 +111,16 @@ export const COLORS = ['#F04155', '#FF823A', '#F2F26F', '#FFF7BD', '#95CFB7']
 export const generateFromString = (name: string | number, options: Options = {}) => {
   const { colors = COLORS, size = 100 } = options
   const data = generateData(name, colors)
-  return `<svg
-      viewBox="0 0 ${SIZE} ${SIZE}"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      width="${size}"
-      height="${size}"
-    >
-      <g>
-        <rect width="${SIZE}" height="${SIZE}" rx="${SIZE / 2}" fill="${hexToRgb(data.backgroundColor)}" />
-        <rect
-          x="0"
-          y="0"
-          width="${SIZE}"
-          height="${SIZE}"
-          transform="${'translate(' +
-    data.wrapperTranslateX +
-    ' ' +
-    data.wrapperTranslateY +
-    ') rotate(' +
-    data.wrapperRotate +
-    ' ' +
-    SIZE / 2 +
-    ' ' +
-    SIZE / 2 +
-    ') scale(' +
-    data.wrapperScale +
-    ')'
-    }"
-          fill="${hexToRgb(data.wrapperColor)}"
-          rx="${data.isCircle ? SIZE : SIZE / 6}"
-        />
-        <g
-          transform="${'translate(' +
-    data.faceTranslateX +
-    ' ' +
-    data.faceTranslateY +
-    ') rotate(' +
-    data.faceRotate +
-    ' ' +
-    SIZE / 2 +
-    ' ' +
-    SIZE / 2 +
-    ')'
-    }"
-        >
-          ${data.isMouthOpen
-      ? (
-        `<path
-              d="M15 ${(19 + data.mouthSpread)} c2 1 4 1 6 0"
-              stroke="${hexToRgb(data.faceColor)}"
-              fill="none"
-              strokeLinecap="round"
-            />`
-      )
-      : (
-        `<path
-              d="M13, ${(19 + data.mouthSpread)} a1,0.75 0 0,0 10,0"
-              fill="${hexToRgb(data.faceColor)}"
-            />`
-      )}
-          <rect
-            x="${14 - data.eyeSpread}"
-            y="14"
-            width="1.5"
-            height="2"
-            rx="1"
-            stroke="none"
-            fill="${hexToRgb(data.faceColor)}"
-          />
-          <rect
-            x="${20 + data.eyeSpread}"
-            y="14"
-            width="1.5"
-            height="2"
-            rx="1"
-            stroke="none"
-            fill="${hexToRgb(data.faceColor)}"
-          />
-        </g>
-        </g>
-    </svg>
-  `
+
+  const HALF = SIZE / 2
+
+  const svgBg = `<rect width="${SIZE}" height="${SIZE}" rx="${HALF}" fill="${hexToRgb(data.backgroundColor)}" />`
+  const svgFg = `<rect x="0" y="0" width="${SIZE}" height="${SIZE}" rx="${data.isCircle ? SIZE : SIZE / 6}" transform="translate(${data.wrapperTranslateX} ${data.wrapperTranslateY}) rotate(${data.wrapperRotate} ${HALF} ${HALF}) scale(${data.wrapperScale})" fill="${hexToRgb(data.wrapperColor)}" />`
+
+  const svgMouth = data.isMouthOpen
+    ? `<path d="M15 ${(19 + data.mouthSpread)} c2 1 4 1 6 0" stroke="${hexToRgb(data.faceColor)}" fill="none" strokeLinecap="round"/>`
+    : `<path d="M13, ${(19 + data.mouthSpread)} a1,0.75 0 0,0 10,0" fill="${hexToRgb(data.faceColor)}"/>`
+  const svgFace = `<g transform="translate(${data.faceTranslateX} ${data.faceTranslateY}) rotate(${data.faceRotate} ${HALF} ${HALF})">${svgMouth}<rect x="${14 - data.eyeSpread}" y="14" width="1.5" height="2" rx="1" stroke="none" fill="${hexToRgb(data.faceColor)}"/><rect x="${20 + data.eyeSpread}" y="14" width="1.5" height="2" rx="1" stroke="none" fill="${hexToRgb(data.faceColor)}"/></g>`
+
+  return `<svg viewBox="0 0 ${SIZE} ${SIZE}" fill="none" xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}">${svgBg}${svgFg}${svgFace}</svg>`
 }
