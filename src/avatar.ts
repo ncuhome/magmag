@@ -29,7 +29,6 @@ export const getAngle = (x, y) => {
 }
 
 export const getUnit = (number, range, index = 0) => {
-  console.log(index)
   const value = number % range
 
   if (index && ((getDigit(number, index) % 2) === 0)) {
@@ -102,9 +101,15 @@ function generateData(name, colors) {
   return data
 }
 
+export interface Options {
+  colors?: [string, string, string, string, string]
+  size?: number
+}
+
 export const COLORS = ['#F04155', '#FF823A', '#F2F26F', '#FFF7BD', '#95CFB7']
 
-export const generateFromString = (name: string | number, colors = COLORS, size = 100) => {
+export const generateFromString = (name: string | number, options: Options = {}) => {
+  const { colors = COLORS, size = 100 } = options
   const data = generateData(name, colors)
   return `<svg
       viewBox="0 0 ${SIZE} ${SIZE}"

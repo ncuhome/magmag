@@ -39,7 +39,7 @@ const createBall = (x: number, y: number, id: number, radius = 40) => {
     render: {
       // @ts-ignore
       sprite: {
-        texture: `data:image/svg+xml;utf8,${generateFromString(String(id) + nanoid())}`
+        texture: `data:image/svg+xml;utf8,${generateFromString(String(id))}`
       }
     },
     plugin: {
@@ -95,11 +95,19 @@ const main = async () => {
   ])
 
   for (let i = 0; i < 200; i += 1) {
-    const body = Bodies.polygon(
+    const size = Common.random(3, 10)
+    const body = Bodies.circle(
       Common.random(400, 200),
       Common.random(400, 200),
-      Common.random(1, 5),
-      Common.random(5, 10)
+      size,
+      {
+        render: {
+          // @ts-ignore
+          sprite: {
+            texture: `data:image/svg+xml;utf8,${generateFromString(nanoid(8), { size: size * 3 })}`
+          }
+        }
+      }
     )
 
     World.add(world, body)
