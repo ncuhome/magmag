@@ -10,6 +10,8 @@ console.log('ID', awareness.clientID)
 
 Matter.use(MatterAttractors)
 
+const uid = nanoid(16)
+
 interface PlayerObj {
   id: number
   body: Body
@@ -33,9 +35,10 @@ interface Position {
 interface Player {
   id: number
   pos: Position
+  uid: string
 }
 
-const createBall = (x: number, y: number, id: number, opacity = 1.0, radius = 40) => {
+const createBall = (x: number, y: number, id: string, opacity = 1.0, radius = 40) => {
   return Bodies.circle(x, y, radius, {
     render: {
       // @ts-ignore
@@ -89,7 +92,7 @@ const main = async () => {
 
   engine.gravity.scale = 0
 
-  const ball = createBall(400, 200, awareness.clientID)
+  const ball = createBall(400, 200, uid)
 
   // add bodies
   Composite.add(world, [
@@ -138,7 +141,7 @@ const main = async () => {
     } else {
       otherPlayers.forEach(otherPlayer => {
         if (otherPlayer?.pos?.x) {
-          const newBody = createBall(otherPlayer.pos.x, otherPlayer.pos.y, otherPlayer.id, 0.7)
+          const newBody = createBall(otherPlayer.pos.x, otherPlayer.pos.y, otherPlayer.uid, 0.7)
           playerObjs.push({
             id: otherPlayer.id,
             body: newBody
@@ -160,6 +163,7 @@ const main = async () => {
 
     awareness.setLocalState({
       id: awareness.clientID,
+      uid,
       pos: {
         x: ball.position.x,
         y: ball.position.y
