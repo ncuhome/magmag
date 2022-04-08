@@ -8,3 +8,5 @@ export const provider = new WebsocketProvider('wss://y-websocket-server.onrender
 export const awareness = provider.awareness
 
 export const THROTTLE_TIME = 120
+
+export const SMALL_COUNTS = 100

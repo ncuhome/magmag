@@ -3,7 +3,7 @@ import Matter, { Bodies, Body, Common, Composite, Engine, Events, Mouse, Render,
 import { nanoid } from 'nanoid'
 
 import { generateFromString } from './avatar'
-import { awareness } from './utils'
+import { awareness, SMALL_COUNTS } from './utils'
 
 console.log('ID', awareness.clientID)
 
@@ -34,13 +34,14 @@ interface Player {
   pos: Position
 }
 
-const createBall = (x: number, y: number, id: number, radius = 40) => {
+const createBall = (x: number, y: number, id: string, opacity = 1.0, radius = 40) => {
   return Bodies.circle(x, y, radius, {
     render: {
       // @ts-ignore
       sprite: {
-        texture: `data:image/svg+xml;utf8,${generateFromString(String(id))}`
-      }
+        texture: `data:image/svg+xml;utf8,${generateFromString(id)}`
+      },
+      opacity
     },
     plugin: {
       attractors: [
@@ -87,14 +88,14 @@ const main = async () => {
 
   engine.gravity.scale = 0
 
-  const ball = createBall(400, 200, awareness.clientID)
+  const ball = createBall(400, 200, String(awareness.clientID) + nanoid(8))
 
   // add bodies
   Composite.add(world, [
     ball
   ])
 
-  for (let i = 0; i < 200; i += 1) {
+  for (let i = 0; i < SMALL_COUNTS; i += 1) {
     const size = Common.random(3, 10)
     const body = Bodies.circle(
       Common.random(400, 200),
@@ -136,7 +137,7 @@ const main = async () => {
     } else {
       otherPlayers.forEach(otherPlayer => {
         if (otherPlayer?.pos?.x) {
-          const newBody = createBall(otherPlayer.pos.x, otherPlayer.pos.y, otherPlayer.id)
+          const newBody = createBall(otherPlayer.pos.x, otherPlayer.pos.y, String(otherPlayer.id), 0.7)
           playerObjs.push({
             id: otherPlayer.id,
             body: newBody
