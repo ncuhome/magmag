@@ -41,7 +41,7 @@ interface StateChanged {
 const init = () => {
   bgSound.play()
 
-  screenfull.request()
+  screenfull.isEnabled && screenfull.request()
 
   if (IS_MOBILE) {
     nipple.create({
@@ -300,17 +300,6 @@ const main = async () => {
     x: 240,
     y: 320
   })
-
-  return {
-    engine: engine,
-    runner: runner,
-    render: render,
-    canvas: render.canvas,
-    stop: function () {
-      Render.stop(render)
-      Runner.stop(runner)
-    }
-  }
 }
 
 main()

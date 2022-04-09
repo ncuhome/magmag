@@ -5,7 +5,6 @@ specifiers:
   '@types/howler': ^2.2.7
   '@types/matter-js': ^0.17.7
   eslint: 8.12.0
-  generate-avatar: ^1.4.10
   howler: ^2.2.3
   is-mobile: ^3.1.1
   less: ^4.1.2
@@ -21,7 +20,6 @@ specifiers:
   yjs: ^13.5.34
 
 dependencies:
-  generate-avatar: 1.4.10
   howler: 2.2.3
   is-mobile: 3.1.1
   matter-attractors: 0.1.6
@@ -151,10 +149,6 @@ packages:
   /@types/matter-js/0.17.7:
     resolution: {integrity: sha512-LHx3Kf1vY68wEgSAuQkMShfGxB9YVKtcFYqPTMAcmUCnHuvcPkfnlbveMkH8xG/s1EIYcbBVTnUNDV/CA5B2RA==}
     dev: true
-
-  /@types/node/13.13.52:
-    resolution: {integrity: sha512-s3nugnZumCC//n4moGGe6tkNMyYEdaDBitVjwPxXmR5lnMG5dHePinH2EdxkG3Rh1ghFHHixAG4NJhpJW1rthQ==}
-    dev: false
 
   /@typescript-eslint/eslint-plugin/5.18.0_a07dca3bdfc4bfa60f4dda0c1f9e3287:
     resolution: {integrity: sha512-tzrmdGMJI/uii9/V6lurMo4/o+dMTKDH82LkNjhJ3adCW22YQydoRs5MwTiqxGF9CSYxPxQ7EYb4jLNlIs+E+A==}
@@ -1046,12 +1040,6 @@ packages:
   /functional-red-black-tree/1.0.1:
     resolution: {integrity: sha1-GwqzvVU7Kg1jmdKcDj6gslIHgyc=}
     dev: true
-
-  /generate-avatar/1.4.10:
-    resolution: {integrity: sha512-HlVz3ZXTqz7F0sb3OoW8591SojdVtyyuqX6kCi/AnmEXH16MLmPRiChv2680E9WF39zl5nlHMrgZxlmqnTrzkQ==}
-    dependencies:
-      '@types/node': 13.13.52
-    dev: false
 
   /get-browser-rtc/1.1.0:
     resolution: {integrity: sha512-MghbMJ61EJrRsDe7w1Bvqt3ZsBuqhce5nrn/XAwgwOXhcsz53/ltdxOse1h/8eKXj5slzxdsz56g5rzOFSGwfQ==}
