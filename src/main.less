@@ -10,6 +10,7 @@
   transition: all 0.3s ease-in-out;
 
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
@@ -20,10 +21,10 @@
   border-radius: 16px;
   padding: 1rem 2rem;
   transition: all 0.05s ease-in-out;
-  background: linear-gradient(-45deg, #FF823A, #F04155, #F2F26F, #95CFB7);
+  background: linear-gradient(-45deg, #ff823a, #f04155, #f2f26f, #95cfb7);
   animation: gradient 10s ease infinite;
   background-size: 200% 200%;
-
+  cursor: pointer;
 
   @keyframes gradient {
     0% {
@@ -50,4 +51,37 @@
   }
 }
 
+.avatar-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 4rem;
+}
 
+.avatar {
+  width: 6rem;
+  height: 6rem;
+  transition: all 0.3s ease-in-out;
+  outline: none;
+  user-select: none;
+
+  .base {
+    cursor: pointer;
+    opacity: 0.6;
+  }
+
+  &:hover {
+    .base;
+  }
+
+  &:active {
+    .base;
+  }
+}
+
+.footnote {
+  margin-top: 0.8rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+}

@@ -1,4 +1,5 @@
 import getIsMobile from 'is-mobile'
+import { nanoid } from 'nanoid'
 import Toastify from 'toastify-js'
 
 export const IS_MOBILE = getIsMobile()
@@ -9,6 +10,8 @@ export const enum ToastType {
   JOIN,
   QUIT
 }
+
+export const getUid = () => nanoid(16)
 
 const toastTypeStyleMap = {
   [ToastType.JOIN]: {
