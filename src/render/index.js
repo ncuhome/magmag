@@ -14,17 +14,17 @@ import { Bounds, Common, Composite, Events, Mouse, Vector } from 'matter-js'
 
 export const Render = {};
 
-(function() {
+(function () {
   let _requestAnimationFrame,
     _cancelAnimationFrame
 
   if (typeof window !== 'undefined') {
     _requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame ||
-                                      window.mozRequestAnimationFrame || window.msRequestAnimationFrame ||
-                                      function(callback) { window.setTimeout(function() { callback(Common.now()) }, 1000 / 60) }
+      window.mozRequestAnimationFrame || window.msRequestAnimationFrame ||
+      function (callback) { window.setTimeout(function () { callback(Common.now()) }, 1000 / 60) }
 
     _cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame ||
-                                      window.webkitCancelAnimationFrame || window.msCancelAnimationFrame
+      window.webkitCancelAnimationFrame || window.msCancelAnimationFrame
   }
 
   Render._goodFps = 30
@@ -38,7 +38,7 @@ export const Render = {};
      * @param {object} [options]
      * @return {render} A new renderer
      */
-  Render.create = function(options) {
+  Render.create = function (options) {
     const defaults = {
       controller: Render,
       engine: null,
@@ -132,7 +132,7 @@ export const Render = {};
      * @method run
      * @param {render} render
      */
-  Render.run = function(render) {
+  Render.run = function (render) {
     (function loop(time) {
       render.frameRequestId = _requestAnimationFrame(loop)
 
@@ -155,7 +155,7 @@ export const Render = {};
      * @method stop
      * @param {render} render
      */
-  Render.stop = function(render) {
+  Render.stop = function (render) {
     _cancelAnimationFrame(render.frameRequestId)
   }
 
@@ -166,7 +166,7 @@ export const Render = {};
      * @param {render} render
      * @param {number} pixelRatio
      */
-  Render.setPixelRatio = function(render, pixelRatio) {
+  Render.setPixelRatio = function (render, pixelRatio) {
     const options = render.options
     const canvas = render.canvas
 
@@ -195,7 +195,7 @@ export const Render = {};
      * @param {vector} [padding]
      * @param {bool} [center=true]
      */
-  Render.lookAt = function(render, objects, padding, center) {
+  Render.lookAt = function (render, objects, padding, center) {
     center = typeof center !== 'undefined' ? center : true
     objects = Common.isArray(objects) ? objects : [objects]
     padding = padding || {
@@ -281,7 +281,7 @@ export const Render = {};
      * @method startViewTransform
      * @param {render} render
      */
-  Render.startViewTransform = function(render) {
+  Render.startViewTransform = function (render) {
     const boundsWidth = render.bounds.max.x - render.bounds.min.x
     const boundsHeight = render.bounds.max.y - render.bounds.min.y
     const boundsScaleX = boundsWidth / render.options.width
@@ -300,7 +300,7 @@ export const Render = {};
      * @method endViewTransform
      * @param {render} render
      */
-  Render.endViewTransform = function(render) {
+  Render.endViewTransform = function (render) {
     render.context.setTransform(render.options.pixelRatio, 0, 0, render.options.pixelRatio, 0, 0)
   }
 
@@ -310,7 +310,7 @@ export const Render = {};
      * @method world
      * @param {render} render
      */
-  Render.world = function(render, time) {
+  Render.world = function (render, time) {
     const startTime = Common.now()
     const engine = render.engine
     const world = engine.world
@@ -435,7 +435,7 @@ export const Render = {};
      * @param {RenderingContext} context
      * @param {Number} time
      */
-  Render.stats = function(render, context, time) {
+  Render.stats = function (render, context, time) {
     const engine = render.engine
     const world = engine.world
     const bodies = Composite.allBodies(world)
@@ -489,7 +489,7 @@ export const Render = {};
      * @param {render} render
      * @param {RenderingContext} context
      */
-  Render.performance = function(render, context) {
+  Render.performance = function (render, context) {
     const engine = render.engine
     const timing = render.timing
     const deltaHistory = timing.deltaHistory
@@ -523,7 +523,7 @@ export const Render = {};
       context, x, y, width, graphHeight, deltaHistory.length,
       Math.round(fps) + ' fps',
       fps / Render._goodFps,
-      function(i) { return (deltaHistory[i] / deltaMean) - 1 }
+      function (i) { return (deltaHistory[i] / deltaMean) - 1 }
     )
 
     // show engine delta
@@ -531,7 +531,7 @@ export const Render = {};
       context, x + gap + width, y, width, graphHeight, engineDeltaHistory.length,
       lastEngineDelta.toFixed(2) + ' dt',
       Render._goodDelta / lastEngineDelta,
-      function(i) { return (engineDeltaHistory[i] / engineDeltaMean) - 1 }
+      function (i) { return (engineDeltaHistory[i] / engineDeltaMean) - 1 }
     )
 
     // show engine update time
@@ -539,7 +539,7 @@ export const Render = {};
       context, x + (gap + width) * 2, y, width, graphHeight, engineElapsedHistory.length,
       engineElapsedMean.toFixed(2) + ' ut',
       1 - (engineElapsedMean / Render._goodFps),
-      function(i) { return (engineElapsedHistory[i] / engineElapsedMean) - 1 }
+      function (i) { return (engineElapsedHistory[i] / engineElapsedMean) - 1 }
     )
 
     // show render time
@@ -547,7 +547,7 @@ export const Render = {};
       context, x + (gap + width) * 3, y, width, graphHeight, elapsedHistory.length,
       elapsedMean.toFixed(2) + ' rt',
       1 - (elapsedMean / Render._goodFps),
-      function(i) { return (elapsedHistory[i] / elapsedMean) - 1 }
+      function (i) { return (elapsedHistory[i] / elapsedMean) - 1 }
     )
 
     // show effective speed
@@ -555,7 +555,7 @@ export const Render = {};
       context, x + (gap + width) * 4, y, width, graphHeight, timestampElapsedHistory.length,
       rateMean.toFixed(2) + ' x',
       rateMean * rateMean * rateMean,
-      function(i) { return (((timestampElapsedHistory[i] / deltaHistory[i]) / rateMean) || 0) - 1 }
+      function (i) { return (((timestampElapsedHistory[i] / deltaHistory[i]) / rateMean) || 0) - 1 }
     )
   }
 
@@ -573,7 +573,7 @@ export const Render = {};
      * @param {string} indicator
      * @param {function} plotY
      */
-  Render.status = function(context, x, y, width, height, count, label, indicator, plotY) {
+  Render.status = function (context, x, y, width, height, count, label, indicator, plotY) {
     // background
     context.strokeStyle = '#888'
     context.fillStyle = '#444'
@@ -607,7 +607,7 @@ export const Render = {};
      * @param {constraint[]} constraints
      * @param {RenderingContext} context
      */
-  Render.constraints = function(constraints, context) {
+  Render.constraints = function (constraints, context) {
     const c = context
 
     for (let i = 0; i < constraints.length; i++) {
@@ -684,7 +684,7 @@ export const Render = {};
      * @param {body[]} bodies
      * @param {RenderingContext} context
      */
-  Render.bodies = function(render, bodies, context) {
+  Render.bodies = function (render, bodies, context) {
     const c = context
     const engine = render.engine
     const options = render.options
@@ -773,6 +773,38 @@ export const Render = {};
         }
 
         c.globalAlpha = 1
+
+        /**
+         * Custom render text from https://github.com/liabru/matter-js/issues/321#issuecomment-393062469
+         * Usage:
+         * text: {
+         *   content:"Test",
+         *   color:"blue",
+         *   size:16,
+         *   family:"Papyrus",
+         * },
+         */
+        if (part.render.text) {
+          const {
+            content = '',
+            color = '#FFFFFF',
+            size = 30,
+            family = 'Arial'
+          } = part.render.text
+
+          let fontsize
+
+          if (size) {
+            fontsize = size
+          } else if (part.circleRadius) {
+            fontsize = part.circleRadius / 2
+          }
+          c.textBaseline = 'middle'
+          c.textAlign = 'center'
+          c.fillStyle = color
+          c.font = fontsize + 'px ' + family
+          c.fillText(content, part.position.x, part.position.y)
+        }
       }
     }
   }
@@ -785,7 +817,7 @@ export const Render = {};
      * @param {body[]} bodies
      * @param {RenderingContext} context
      */
-  Render.bodyWireframes = function(render, bodies, context) {
+  Render.bodyWireframes = function (render, bodies, context) {
     const c = context
     const showInternalEdges = render.options.showInternalEdges
     let body
@@ -837,7 +869,7 @@ export const Render = {};
      * @param {body[]} bodies
      * @param {RenderingContext} context
      */
-  Render.bodyConvexHulls = function(render, bodies, context) {
+  Render.bodyConvexHulls = function (render, bodies, context) {
     const c = context
     let body
     let part
@@ -875,7 +907,7 @@ export const Render = {};
      * @param {body[]} bodies
      * @param {RenderingContext} context
      */
-  Render.vertexNumbers = function(render, bodies, context) {
+  Render.vertexNumbers = function (render, bodies, context) {
     const c = context
     let i
     let j
@@ -901,7 +933,7 @@ export const Render = {};
      * @param {mouse} mouse
      * @param {RenderingContext} context
      */
-  Render.mousePosition = function(render, mouse, context) {
+  Render.mousePosition = function (render, mouse, context) {
     const c = context
     c.fillStyle = 'rgba(255,255,255,0.8)'
     c.fillText(mouse.position.x + '  ' + mouse.position.y, mouse.position.x + 5, mouse.position.y - 5)
@@ -915,7 +947,7 @@ export const Render = {};
      * @param {body[]} bodies
      * @param {RenderingContext} context
      */
-  Render.bodyBounds = function(render, bodies, context) {
+  Render.bodyBounds = function (render, bodies, context) {
     const c = context
     const engine = render.engine
     const options = render.options
@@ -952,7 +984,7 @@ export const Render = {};
      * @param {body[]} bodies
      * @param {RenderingContext} context
      */
-  Render.bodyAxes = function(render, bodies, context) {
+  Render.bodyAxes = function (render, bodies, context) {
     const c = context
     const engine = render.engine
     const options = render.options
@@ -1013,7 +1045,7 @@ export const Render = {};
      * @param {body[]} bodies
      * @param {RenderingContext} context
      */
-  Render.bodyPositions = function(render, bodies, context) {
+  Render.bodyPositions = function (render, bodies, context) {
     const c = context
     const engine = render.engine
     const options = render.options
@@ -1068,7 +1100,7 @@ export const Render = {};
      * @param {body[]} bodies
      * @param {RenderingContext} context
      */
-  Render.bodyVelocity = function(render, bodies, context) {
+  Render.bodyVelocity = function (render, bodies, context) {
     const c = context
 
     c.beginPath()
@@ -1095,7 +1127,7 @@ export const Render = {};
      * @param {body[]} bodies
      * @param {RenderingContext} context
      */
-  Render.bodyIds = function(render, bodies, context) {
+  Render.bodyIds = function (render, bodies, context) {
     const c = context
     let i
     let j
@@ -1121,7 +1153,7 @@ export const Render = {};
      * @param {pair[]} pairs
      * @param {RenderingContext} context
      */
-  Render.collisions = function(render, pairs, context) {
+  Render.collisions = function (render, pairs, context) {
     const c = context
     const options = render.options
     let pair
@@ -1202,7 +1234,7 @@ export const Render = {};
      * @param {pair[]} pairs
      * @param {RenderingContext} context
      */
-  Render.separations = function(render, pairs, context) {
+  Render.separations = function (render, pairs, context) {
     const c = context
     const options = render.options
     let pair
@@ -1255,7 +1287,7 @@ export const Render = {};
      * @param {inspector} inspector
      * @param {RenderingContext} context
      */
-  Render.inspector = function(inspector, context) {
+  Render.inspector = function (inspector, context) {
     const engine = inspector.engine
     const selected = inspector.selected
     const render = inspector.render
@@ -1336,7 +1368,7 @@ export const Render = {};
      * @param {render} render
      * @param {number} time
      */
-  const _updateTiming = function(render, time) {
+  const _updateTiming = function (render, time) {
     const engine = render.engine
     const timing = render.timing
     const historySize = timing.historySize
@@ -1371,7 +1403,7 @@ export const Render = {};
      * @param {Number[]} values
      * @return {Number} the mean of given values
      */
-  const _mean = function(values) {
+  const _mean = function (values) {
     let result = 0
     for (let i = 0; i < values.length; i += 1) {
       result += values[i]
@@ -1386,12 +1418,12 @@ export const Render = {};
      * @param {} height
      * @return canvas
      */
-  const _createCanvas = function(width, height) {
+  const _createCanvas = function (width, height) {
     const canvas = document.createElement('canvas')
     canvas.width = width
     canvas.height = height
-    canvas.oncontextmenu = function() { return false }
-    canvas.onselectstart = function() { return false }
+    canvas.oncontextmenu = function () { return false }
+    canvas.onselectstart = function () { return false }
     return canvas
   }
 
@@ -1402,12 +1434,12 @@ export const Render = {};
      * @param {HTMLElement} canvas
      * @return {Number} pixel ratio
      */
-  const _getPixelRatio = function(canvas) {
+  const _getPixelRatio = function (canvas) {
     const context = canvas.getContext('2d')
     const devicePixelRatio = window.devicePixelRatio || 1
     const backingStorePixelRatio = context.webkitBackingStorePixelRatio || context.mozBackingStorePixelRatio ||
-                                      context.msBackingStorePixelRatio || context.oBackingStorePixelRatio ||
-                                      context.backingStorePixelRatio || 1
+      context.msBackingStorePixelRatio || context.oBackingStorePixelRatio ||
+      context.backingStorePixelRatio || 1
 
     return devicePixelRatio / backingStorePixelRatio
   }
@@ -1420,7 +1452,7 @@ export const Render = {};
      * @param {string} imagePath
      * @return {Image} texture
      */
-  const _getTexture = function(render, imagePath) {
+  const _getTexture = function (render, imagePath) {
     let image = render.textures[imagePath]
 
     if (image) { return image }
@@ -1438,7 +1470,7 @@ export const Render = {};
      * @param {render} render
      * @param {string} background
      */
-  const _applyBackground = function(render, background) {
+  const _applyBackground = function (render, background) {
     let cssBackground = background
 
     if (/(jpg|gif|png)$/.test(background)) { cssBackground = 'url(' + background + ')' }

@@ -42,7 +42,9 @@ interface StateChanged {
 const init = () => {
   bgSound.play()
 
-  screenfull.isEnabled && screenfull.request()
+  if (!import.meta.env.DEV) {
+    screenfull.isEnabled && screenfull.request()
+  }
 
   if (IS_MOBILE) {
     nipple.create({
