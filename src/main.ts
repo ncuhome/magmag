@@ -2,13 +2,14 @@ import 'toastify-js/src/toastify.css'
 import './main.less'
 
 import MatterAttractors from 'matter-attractors'
-import Matter, { Bodies, Body, Common, Engine, Events, IMousePoint, Mouse, Render, Runner, Vector, World } from 'matter-js'
+import Matter, { Bodies, Body, Common, Engine, Events, IMousePoint, Mouse, Render as MatterRender, Runner, Vector, World } from 'matter-js'
 import { nanoid } from 'nanoid'
 import nipple from 'nipplejs'
 import screenfull from 'screenfull'
 
 import { bgSound } from './audio'
 import { generateFromString } from './avatar'
+import { Render } from './render'
 import { IS_MOBILE, SMALL_COUNTS, toast, ToastType } from './utils'
 import { awareness } from './y'
 
