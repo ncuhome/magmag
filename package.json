@@ -10,8 +10,7 @@
     "lint:fix": "npm run lint -- --fix",
     "serve": "vite preview",
     "server": "npx y-webrtc-signaling",
-    "start": "yarn dev",
-    "watch": "vite build --watch"
+    "start": "pnpm dev"
   },
   "dependencies": {
     "howler": "^2.2.3",
