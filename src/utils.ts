@@ -34,3 +34,11 @@ export const toast = (text: string, type: ToastType) => {
   })
     .showToast()
 }
+
+export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
+export const UNTOUCHABLE_FILTER = {
+  group: -1,
+  category: 2,
+  mask: 0
+}
