@@ -1,11 +1,11 @@
 import { debounce, throttle } from 'lodash-es'
 import MatterAttractors from 'matter-attractors'
-import Matter, { Bodies, Body, Common, Engine, Events, Mouse, Render, Runner, SAT, Vector, World } from 'matter-js'
+import Matter, { Bodies, Body, Common, Engine, Events, Mouse, Render as MatterRender, Runner, SAT, Vector, World } from 'matter-js'
 import nipple from 'nipplejs'
 
 import { bgSound } from './audio'
 import { generateFromString } from './avatar'
-import { Render as CustomRender } from './render'
+import { Render } from './render'
 import { getUid, IS_MOBILE, sleep, SMALL_COUNTS, toast, ToastType, UNTOUCHABLE_FILTER } from './utils'
 import { awareness } from './y'
 
@@ -64,7 +64,7 @@ export class Magmag {
 
     this.world = this.engine.world
 
-    this.render = (CustomRender as typeof Render).create({
+    this.render = (Render as typeof MatterRender).create({
       element: document.body,
       engine: this.engine,
       options: {
