@@ -45,13 +45,15 @@ const playerObjs: PlayerObj[] = []
 export class Magmag {
   score = 0
   uid = getUid()
+  running = false
 
   private engine: Engine
   private world: World
-  private render: Render
+  private render: MatterRender
   private runner: Runner
   private mouse: Mouse
 
+  private created = false
   private player: Body
   private scoreText: Body
 
@@ -83,22 +85,28 @@ export class Magmag {
   start() {
     bgSound.play()
 
-    if (IS_MOBILE) {
-      nipple.create({
-        color: 'white'
-      })
-    }
-
     Render.run(this.render)
     Runner.run(this.runner, this.engine)
 
-    this.addBodies()
-    this.listen()
+    if (!this.created) {
+      if (IS_MOBILE) {
+        nipple.create({
+          color: 'white'
+        })
+      }
+      this.addBodies()
+      this.listen()
+
+      this.created = true
+    }
+    this.running = true
   }
 
   stop() {
+    bgSound.pause()
     Render.stop(this.render)
     Runner.stop(this.runner)
+    this.running = false
   }
 
   private listen() {
@@ -192,6 +200,7 @@ export class Magmag {
   }
 
   private syncStates = (state: StateChanged) => {
+    if (!this.running) return
     const map = awareness.getStates()
 
     state.added.forEach(id => {
@@ -265,7 +274,7 @@ export class Magmag {
         // @ts-ignore
         text: {
           content: 'BGM: Esse by Xylo-Ziko',
-          color: 'rgba(255, 255, 255, 0.05)',
+          color: 'rgba(255, 255, 255, 0.1)',
           size: 24
         }
       }
@@ -278,7 +287,7 @@ export class Magmag {
         // @ts-ignore
         text: {
           content: 'Made by NCUHOME',
-          color: 'rgba(255, 255, 255, 0.05)',
+          color: 'rgba(255, 255, 255, 0.1)',
           size: 24
         }
       }
