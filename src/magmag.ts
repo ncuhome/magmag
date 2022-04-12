@@ -61,6 +61,10 @@ export class Magmag {
   private showScore = false
   private smallCounts = 0
 
+  private attracting = true
+  private width = window.innerWidth
+  private height = window.innerHeight
+
   constructor() {
     this.engine = Engine.create()
     this.engine.gravity.scale = 0
@@ -71,8 +75,8 @@ export class Magmag {
       element: document.body,
       engine: this.engine,
       options: {
-        width: window.innerWidth,
-        height: window.innerHeight,
+        width: this.width,
+        height: this.height,
         wireframes: false
       }
     })
@@ -123,18 +127,37 @@ export class Magmag {
     })
 
     window.addEventListener('resize', () => {
-      this.render.bounds.max.x = window.innerWidth
-      this.render.bounds.max.y = window.innerHeight
-      this.render.options.width = window.innerWidth
-      this.render.options.height = window.innerHeight
-      this.render.canvas.width = window.innerWidth
-      this.render.canvas.height = window.innerHeight
+      this.resize()
     })
 
     awareness.on('change', this.syncStates)
 
-    let step = 1
+    this.listenOnUpdate()
 
+    this.listenEvents()
+  }
+
+  private resize = throttle(() => {
+    this.width = window.innerWidth
+    this.height = window.innerHeight
+    this.render.bounds.max.x = this.width
+    this.render.bounds.max.y = this.height
+    this.render.options.width = this.width
+    this.render.options.height = this.height
+    this.render.canvas.width = this.width
+    this.render.canvas.height = this.height
+  }, 300)
+
+  private listenEvents() {
+    window.addEventListener('keypress', e => {
+      if (e.code === 'Space') {
+        this.attracting = !this.attracting
+      }
+    })
+  }
+
+  private listenOnUpdate() {
+    let step = 1
     Events.on(this.engine, 'afterUpdate', (e) => {
       // @ts-ignore
       const text = this.scoreText.render.text as Text
@@ -244,8 +267,7 @@ export class Magmag {
   }
 
   private addPlayer = () => {
-    const { width, height } = this.render.options
-    this.player = this.createBall(width / 2, height / 2, this.uid)
+    this.player = this.createBall(this.width / 2, this.height / 2, this.uid)
 
     World.add(this.world, [
       this.player
@@ -253,7 +275,7 @@ export class Magmag {
   }
 
   private addUI = () => {
-    this.scoreText = Bodies.rectangle(this.render.options.width / 2, this.render.options.height / 2, 100, 100, {
+    this.scoreText = Bodies.rectangle(this.width / 2, this.height / 2, 100, 100, {
       collisionFilter: UNTOUCHABLE_FILTER,
       render: {
         fillStyle: 'transparent',
@@ -270,8 +292,7 @@ export class Magmag {
   }
 
   private addBGText = () => {
-    const { width, height } = this.render.options
-    const text = Bodies.rectangle(width / 2, 64, 100, 100, {
+    const top = Bodies.rectangle(this.width / 2, 64, 100, 100, {
       collisionFilter: UNTOUCHABLE_FILTER,
       render: {
         fillStyle: 'transparent',
@@ -284,7 +305,7 @@ export class Magmag {
       }
     })
 
-    const text1 = Bodies.rectangle(width / 2, height - 64, 100, 100, {
+    const bottom = Bodies.rectangle(this.width / 2, this.height - 64, 100, 100, {
       collisionFilter: UNTOUCHABLE_FILTER,
       render: {
         fillStyle: 'transparent',
@@ -297,7 +318,7 @@ export class Magmag {
       }
     })
 
-    World.add(this.world, [text, text1])
+    World.add(this.world, [top, bottom])
   }
 
   private createBall = (x: number, y: number, id: string, opacity = 1.0, radius = 40) => {
@@ -330,6 +351,7 @@ export class Magmag {
                 }
               }
             }
+            if (!this.attracting) return null
             const scale = bodyB.render.sprite.xScale
             const extraFactor = (1 + Math.log(this.score + 1) / 10)
             return {
@@ -346,8 +368,7 @@ export class Magmag {
   }
 
   private addSmallBalls = async (count: number) => {
-    const { width, height } = this.render.options
-    const max = width > height ? width : height
+    const max = this.width > this.height ? this.width : this.height
     const randOutScreen = () => Math.random() > 0.5 ? Common.random(-max * 1.5, max) : Common.random(max, max * 1.5)
     for (let i = 0; i < count; i += 1) {
       const size = Common.random(4, 10)
