@@ -1,7 +1,7 @@
 import { debounce, throttle } from 'lodash-es'
 import MatterAttractors from 'matter-attractors'
 import Matter, { Bodies, Body, Common, Engine, Events, Mouse, Render as MatterRender, Runner, SAT, Vector, World } from 'matter-js'
-import nipple from 'nipplejs'
+import nipple, { JoystickManager } from 'nipplejs'
 
 import { bgSound } from './audio'
 import { generateFromString } from './avatar'
@@ -47,6 +47,7 @@ export class Magmag {
   uid = getUid()
   running = false
 
+  private joystick: JoystickManager
   private engine: Engine
   private world: World
   private render: MatterRender
@@ -89,15 +90,15 @@ export class Magmag {
     Runner.run(this.runner, this.engine)
 
     if (!this.created) {
-      if (IS_MOBILE) {
-        nipple.create({
-          color: 'white'
-        })
-      }
       this.addBodies()
       this.listen()
 
       this.created = true
+    }
+    if (IS_MOBILE) {
+      this.joystick = nipple.create({
+        color: 'white'
+      })
     }
     this.running = true
   }
@@ -107,6 +108,9 @@ export class Magmag {
     Render.stop(this.render)
     Runner.stop(this.runner)
     this.running = false
+    if (IS_MOBILE) {
+      this.joystick.destroy()
+    }
   }
 
   private listen() {
