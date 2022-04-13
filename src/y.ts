@@ -7,3 +7,5 @@ export const ydoc = new Y.Doc()
 export const provider = new WebrtcProvider('magmag', ydoc, { signaling: ['wss://y-webrtc-signaling.onrender.com'], filterBcConns: false })
 
 export const awareness = provider.awareness
+
+console.log('ID', awareness.clientID)

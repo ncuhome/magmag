@@ -246,19 +246,23 @@ export class Magmag {
       const othersLen = map.size - 1
       if (othersLen > this.playerObjs.length) {
         const toAdd = (Array.from(map.values()) as PlayerState[])
-          .filter(state => state.id !== awareness.clientID)
+          .filter(state => state.id && state.id !== awareness.clientID)
           .map(state => state.id)
-        state.added.push(...toAdd)
-        state.added = Array.from(new Set(state.added))
+        if (toAdd.length > 0) {
+          state.added.push(...toAdd)
+          state.added = Array.from(new Set(state.added))
+        }
       }
       if (othersLen < this.playerObjs.length) {
         const othersId = (Array.from(map.values()) as PlayerState[])
-          .filter(state => state.id !== awareness.clientID)
+          .filter(state => state.id && state.id !== awareness.clientID)
           .map(state => state.id)
-        const currentIds = this.playerObjs.map(playerObj => playerObj.id)
-        const toRemove = currentIds.filter(id => !othersId.includes(id))
-        state.removed.push(...toRemove)
-        state.removed = Array.from(new Set(state.removed))
+        if (othersId.length > 0) {
+          const currentIds = this.playerObjs.map(playerObj => playerObj.id)
+          const toRemove = currentIds.filter(id => !othersId.includes(id))
+          state.removed.push(...toRemove)
+          state.removed = Array.from(new Set(state.removed))
+        }
       }
     }
 
