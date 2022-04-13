@@ -30,6 +30,17 @@ interface StateChanged {
   updated: Id[]
 }
 
+interface PlayerState {
+  id: Id,
+  uid: string,
+  pos: {
+    x: number,
+    y: number
+  },
+  scale: number,
+  angle: number
+}
+
 const debouncedScale = debounce((body: Body, x: number, y: number) => {
   Body.scale(body, x, y)
 }, 1000)
@@ -40,7 +51,6 @@ const bodyScale = (body: Body, scaleDelta: number) => {
   sprite.yScale += scaleDelta
   debouncedScale(body, sprite.xScale, sprite.yScale)
 }
-const playerObjs: PlayerObj[] = []
 
 export class Magmag {
   score = 0
@@ -64,6 +74,8 @@ export class Magmag {
   private attracting = true
   private width = window.innerWidth
   private height = window.innerHeight
+
+  private playerObjs: PlayerObj[] = []
 
   constructor() {
     this.engine = Engine.create()
@@ -197,7 +209,7 @@ export class Magmag {
       })
 
       // sync other players states
-      playerObjs.forEach(playerObj => {
+      this.playerObjs.forEach(playerObj => {
         const otherPlayer = awareness.getStates().get(playerObj.id)
         if (otherPlayer?.pos?.x) {
           playerObj.body.position.x = otherPlayer.pos.x
@@ -230,11 +242,31 @@ export class Magmag {
     if (!this.running) return
     const map = awareness.getStates()
 
+    if (map.size > 1) {
+      const othersLen = map.size - 1
+      if (othersLen > this.playerObjs.length) {
+        const toAdd = (Array.from(map.values()) as PlayerState[])
+          .filter(state => state.id !== awareness.clientID)
+          .map(state => state.id)
+        state.added.push(...toAdd)
+        state.added = Array.from(new Set(state.added))
+      }
+      if (othersLen < this.playerObjs.length) {
+        const othersId = (Array.from(map.values()) as PlayerState[])
+          .filter(state => state.id !== awareness.clientID)
+          .map(state => state.id)
+        const currentIds = this.playerObjs.map(playerObj => playerObj.id)
+        const toRemove = currentIds.filter(id => !othersId.includes(id))
+        state.removed.push(...toRemove)
+        state.removed = Array.from(new Set(state.removed))
+      }
+    }
+
     state.added.forEach(id => {
       const otherPlayer = map.get(id)
       if (otherPlayer?.pos?.x) {
-        const newBody = this.createBall(null, otherPlayer.pos.x, otherPlayer.pos.y, otherPlayer.uid, 0.7)
-        playerObjs.push({
+        const newBody = this.createBall(otherPlayer.pos.x, otherPlayer.pos.y, otherPlayer.uid, 0.6)
+        this.playerObjs.push({
           id: otherPlayer.id,
           body: newBody
         })
@@ -245,11 +277,11 @@ export class Magmag {
     })
 
     state.removed.forEach(id => {
-      const playerObjIdx = playerObjs.findIndex(playerObj => playerObj.id === id)
+      const playerObjIdx = this.playerObjs.findIndex(playerObj => playerObj.id === id)
       if (playerObjIdx !== -1) {
-        const playerObj = playerObjs[playerObjIdx]
+        const playerObj = this.playerObjs[playerObjIdx]
         World.remove(this.world, playerObj.body)
-        playerObjs.splice(playerObjIdx, 1)
+        this.playerObjs.splice(playerObjIdx, 1)
         console.log('removed', playerObj.id)
         toast(`${playerObj.id} 已离开时间线`, ToastType.QUIT)
       }
