@@ -1,44 +1,67 @@
+/* eslint-disable no-empty-pattern */
 import 'toastify-js/src/toastify.css'
 import './main.less'
+
+import { Component, html, render } from 'htm/preact'
 
 import { generateFromString } from './avatar'
 import { Magmag } from './magmag'
 import { getUid } from './utils'
 
-// Game instances
 const magmag = new Magmag()
 
-const startBtn = document.querySelector<HTMLDivElement>('.start')
-const avatarEle = document.querySelector<HTMLImageElement>('.avatar')
-const modalEle = document.querySelector<HTMLDivElement>('.modal')
+class Modal extends Component {
+  state = {
+    start: false,
+    avatar: `data:image/svg+xml;utf8,${generateFromString(magmag.uid)}`
+  }
 
-avatarEle.src = `data:image/svg+xml;utf8,${generateFromString(magmag.uid)}`
+  componentDidMount() {
+    window.onpopstate = (e) => {
+      const pathname = e.target.location.pathname
+      if (pathname === '/') {
+        this.toMenu()
+      } else if (pathname === '/game') {
+        this.toGame(false)
+      }
+    }
+  }
 
-const start = () => {
-  modalEle.style.display = 'none'
-  magmag.start()
-}
+  changeAvatar = () => {
+    magmag.uid = getUid()
+    this.setState({
+      avatar: `data:image/svg+xml;utf8,${generateFromString(magmag.uid)}`
+    })
+  }
 
-const stop = () => {
-  modalEle.style.display = 'flex'
-  magmag.stop()
-}
+  toGame = (pushState = true) => {
+    this.setState({
+      start: true
+    })
+    magmag.start()
+    if (pushState) {
+      history.pushState(null, null, '/game')
+    }
+  }
 
-window.onpopstate = function (e) {
-  const pathname = e.target.location.pathname
-  if (pathname === '/') {
-    stop()
-  } else if (pathname === '/game') {
-    start()
+  toMenu = () => {
+    this.setState({
+      start: false
+    })
+    magmag.stop()
+  }
+
+  render({ }, { avatar, start }) {
+    return html`
+    <div class="modal" style="display: ${start ? 'none' : 'flex'}">
+      <div class="avatar-container">
+        <img class="avatar" alt="avatar" src="${avatar}" onClick=${this.changeAvatar}/>
+        <p class="footnote">点击图片可换脸</p>
+      </div>
+      <span class="start" onClick=${this.toGame}>开始游戏</span>
+    </div>
+    `
   }
 }
 
-avatarEle.onclick = () => {
-  magmag.uid = getUid()
-  avatarEle.src = `data:image/svg+xml;utf8,${generateFromString(magmag.uid)}`
-}
-
-startBtn.addEventListener('click', () => {
-  start()
-  history.pushState(null, null, '/game')
-})
+render(html`<${Modal} page="All" />`, document.querySelector('.root'))
